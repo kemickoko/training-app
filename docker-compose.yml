@@ -1,0 +1,75 @@
+services:
+  db:
+    container_name: db
+
+    # MySQLのDockerfileをビルドする
+    build: 
+      # カレントディレクトリをビルドコンテキストとして指定
+      context: .
+      # Dockerfileのルーティング
+      dockerfile: ./infra/db/Dockerfile
+
+    #  M1 チップでも動くように、Linux の x86_64 アーキテクチャ向け にビルド
+    platform: linux/x86_64
+
+    # コンテナ内で対話型のシェルセッションを実行したい場合
+    tty: true
+
+    # ホストマシンの ./infra/db/mysql_data フォルダがコンテナ内の /var/lib/mysql フォルダにマウントされ、
+    # MySQLのデータがコンテナの外部（ローカルマシン）に保存される
+    volumes:
+      - ./infra/db/mysql_data:/var/lib/mysql
+
+    # MySQLは基本3306番ポートで接続
+    ports:
+      - "3306:3306"
+    
+    # 環境変数の設定
+    environment:
+      # MYSQL_ROOT_PASSWORDは設定しないと起動しない仕様
+      # ${MYSQL_ROOT_PASSWORD}は.envファイルに設定した環境変数を呼び出す
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: training-app
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testuser
+
+    # DBのコンテナのヘルスチェックを行う
+    # mysqladmin(MySQLサーバーの管理を行うクライアントを使ってDBコンテナ自身(127.0.0.1)にpingを送ってヘルスチェックを行う
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD
+      # ヘルスチェックのインターバルは10秒
+      interval: 10s
+      # タイムアウト時間は10秒
+      timeout: 10s
+      # リトライ回数は3回
+      retries: 3
+      # ヘルスチェックが失敗しても無視する時間は30秒
+      start_period: 30s
+
+  app:
+    container_name: django
+
+    # appのDockerfileをビルドする
+    build:
+      # カレントディレクトリをビルドコンテキストとして指定
+      context: .
+      # Dockerfileのルーティング
+      dockerfile: ./infra/app/Dockerfile
+
+    # コンテナ内で対話型のシェルセッションを実行したい場合
+    tty: true
+
+    # ローカルのPC上でファイル（ソースコード）を編集したときに
+    # 自動的にコンテナ上で動いているコードも更新される
+    volumes:
+      - ./:/usr/src/app
+
+    # Djangoのデフォルトポートは8000
+    ports:
+      - 8080:8000
+    
+    # 先にdbを起動してからappを起動する
+    depends_on:
+      db:
+        # dbのヘルスチェックが終わってからappを起動させる
+        condition: service_healthy

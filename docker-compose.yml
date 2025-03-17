@@ -15,8 +15,7 @@ services:
     # コンテナ内で対話型のシェルセッションを実行したい場合
     tty: true
 
-    # ホストマシンの ./infra/db/mysql_data フォルダがコンテナ内の /var/lib/mysql フォルダにマウントされ、
-    # MySQLのデータがコンテナの外部（ローカルマシン）に保存される
+    # dockerのmysql_dataボリュームをコンテナ内の /var/lib/mysqlにマウント
     volumes:
       - mysql_data:/var/lib/mysql
 
@@ -74,5 +73,6 @@ services:
         # dbのヘルスチェックが終わってからappを起動させる
         condition: service_healthy
 
+# Dockerがvolumeを管理
 volumes:
   mysql_data:

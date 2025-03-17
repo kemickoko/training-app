@@ -18,7 +18,7 @@ services:
     # ホストマシンの ./infra/db/mysql_data フォルダがコンテナ内の /var/lib/mysql フォルダにマウントされ、
     # MySQLのデータがコンテナの外部（ローカルマシン）に保存される
     volumes:
-      - ./infra/db/mysql_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
 
     # MySQLは基本3306番ポートで接続
     ports:
@@ -73,3 +73,6 @@ services:
       db:
         # dbのヘルスチェックが終わってからappを起動させる
         condition: service_healthy
+
+volumes:
+  mysql_data:

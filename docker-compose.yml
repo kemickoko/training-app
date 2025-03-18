@@ -28,7 +28,7 @@ services:
       # MYSQL_ROOT_PASSWORDは設定しないと起動しない仕様
       # ${MYSQL_ROOT_PASSWORD}は.envファイルに設定した環境変数を呼び出す
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: training-app
+      MYSQL_DATABASE: training_app
       MYSQL_USER: testuser
       MYSQL_PASSWORD: testuser
 
@@ -65,7 +65,7 @@ services:
 
     # Djangoのデフォルトポートは8000
     ports:
-      - 8080:8000
+      - 8000:8000
     
     # 先にdbを起動してからappを起動する
     depends_on:

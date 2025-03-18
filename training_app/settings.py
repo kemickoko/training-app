@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'training_app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'training-app',
+        'NAME': 'training_app',
         'USER': 'testuser',
         'PASSWORD': 'testuser',
         'HOST': 'db',

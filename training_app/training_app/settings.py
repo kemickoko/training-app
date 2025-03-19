@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5w*whm9nj792+r(qff4%ddfu9-gkz-z8sljo4f-@t56kf718o='
+SECRET_KEY = 'django-insecure-4t&ybnxo6betwh#e@r&2y#fvf*h_n(^0ev+r*n=9+wqun3^u1b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -83,6 +83,7 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

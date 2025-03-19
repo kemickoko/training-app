@@ -62,7 +62,7 @@ services:
     # ローカルのPC上でファイル（ソースコード）を編集したときに
     # 自動的にコンテナ上で動いているコードも更新される
     volumes:
-      - ./:/usr/src/app
+      - ./training_app:/usr/src/app
 
     # Djangoのデフォルトポートは8000
     ports:

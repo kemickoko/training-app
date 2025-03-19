@@ -15,8 +15,7 @@ services:
     # コンテナ内で対話型のシェルセッションを実行したい場合
     tty: true
 
-    # ホストマシンの ./infra/db/mysql_data フォルダがコンテナ内の /var/lib/mysql フォルダにマウントされ、
-    # MySQLのデータがコンテナの外部（ローカルマシン）に保存される
+    # dockerのmysql_dataボリュームをコンテナ内の /var/lib/mysqlにマウント
     volumes:
       - mysql_data:/var/lib/mysql
 
@@ -29,9 +28,10 @@ services:
       # MYSQL_ROOT_PASSWORDは設定しないと起動しない仕様
       # ${MYSQL_ROOT_PASSWORD}は.envファイルに設定した環境変数を呼び出す
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: training-app
+      MYSQL_DATABASE: training_app
       MYSQL_USER: testuser
       MYSQL_PASSWORD: testuser
+      TZ: 'Asia/Tokyo'
 
     # DBのコンテナのヘルスチェックを行う
     # mysqladmin(MySQLサーバーの管理を行うクライアントを使ってDBコンテナ自身(127.0.0.1)にpingを送ってヘルスチェックを行う
@@ -66,7 +66,7 @@ services:
 
     # Djangoのデフォルトポートは8000
     ports:
-      - 8080:8000
+      - 8000:8000
     
     # 先にdbを起動してからappを起動する
     depends_on:
@@ -74,5 +74,22 @@ services:
         # dbのヘルスチェックが終わってからappを起動させる
         condition: service_healthy
 
+  nginx:
+    container_name: nginx
+    # 最新のnginxのimageを使用
+    image: nginx:latest
+    # 
+    volumes:
+      # ローカルのnginx/nginx.confをコンテナの/etc/nginx/conf.d/default.confにマウント
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      # ローカルのstaticをコンテナの/usr/share/nginx/htmlにマウント
+      - .nginx/static:/usr/share/nginx/html
+    # httpのポート
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+
+# Dockerがvolumeを管理
 volumes:
   mysql_data:

@@ -1,6 +1,12 @@
-FROM python:3.12.4
+FROM python:3.10
 
-# 作業ディレクトリを作成
+# 標準出力のバッファリングを無効にする(ログの即時表示等、あると便利）
+ENV PYTHONUNBUFFERED=1
+
+# nginxとUNIXソケット通信用のファイルの保存場所作成
+RUN mkdir -p tmp/sockets
+
+# 作業ディレクトリを指定
 WORKDIR /usr/src/app
 
 # ローカルのrequirements.txtをコンテナの/usr/src/app直下に置く
@@ -16,4 +22,4 @@ COPY . /usr/src/app
 EXPOSE 8000
 
 # アプリケーションを実行
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["bash", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
